@@ -21,7 +21,7 @@ def usage():
 
 def getUsers(conn):
     # Retrieve the list of users
-    conn.request("GET","""/api/users?filter={"_id":1}""")
+    conn.request("GET","""/api/users?select={"_id":1}""")
     response = conn.getresponse()
     data = response.read()
     d = json.loads(data)
@@ -33,7 +33,7 @@ def getUsers(conn):
 
 def getTasks(conn):
     # Retrieve the list of tasks
-    conn.request("GET","""/api/tasks?filter={"_id":1}""")
+    conn.request("GET","""/api/tasks?select={"_id":1}""")
     response = conn.getresponse()
     data = response.read()
     d = json.loads(data)
