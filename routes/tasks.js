@@ -139,7 +139,7 @@ module.exports = function(router) {
             const taskId = req.params.id;
 
             const task = await Task.findById(taskId);
-            if (!task) return res.status(404).json({ message: 'Task not found.', data: {} });
+            if (!task) return res.status(204).json({ message: 'Task not found.', data: {} });
 
             if (task.assignedUser) await User.findByIdAndUpdate(task.assignedUser, { $pull: { pendingTasks: taskId } });
 

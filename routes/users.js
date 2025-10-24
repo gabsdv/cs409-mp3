@@ -164,7 +164,7 @@ module.exports = function(router) {
             const userId = req.params.id;
 
             const user = await User.findById(userId);
-            if (!user) return res.status(404).json({ message: 'User not found.', data: {} });
+            if (!user) return res.status(204).json({ message: 'User not found.', data: {} });
 
             await Task.updateMany(
                 { assignedUser: userId },
