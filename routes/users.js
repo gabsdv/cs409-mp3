@@ -84,6 +84,7 @@ module.exports = function(router) {
     individualUserRoute.get(async function(req, res) {
         try {
             const userId = req.params.id;
+            if (!mongoose.Types.ObjectId.isValid(userId)) return res.status(404).json({ message: 'User not found.', data: {} });
             const select = req.query.select ? JSON.parse(req.query.select) : {};
 
             const user = await User.findById(userId).select(select).exec();
@@ -100,6 +101,7 @@ module.exports = function(router) {
             if (!req.body.name || !req.body.email) return res.status(400).json({ message: 'Need name and email.', data: {} });
 
             const userId = req.params.id;
+            if (!mongoose.Types.ObjectId.isValid(userId)) return res.status(404).json({ message: 'User not found.', data: {} });
 
             const currentUser = await User.findById(userId);
             if (!currentUser) return res.status(404).json({ message: 'User not found.', data: {} });
@@ -162,6 +164,7 @@ module.exports = function(router) {
     individualUserRoute.delete(async function(req, res) {
         try {
             const userId = req.params.id;
+            if (!mongoose.Types.ObjectId.isValid(userId)) return res.status(404).json({ message: 'User not found.', data: {} });
 
             const user = await User.findById(userId);
             if (!user) return res.status(204).json({ message: 'User not found.', data: {} });

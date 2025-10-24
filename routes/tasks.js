@@ -36,20 +36,22 @@ module.exports = function(router) {
             if (!req.body.name || !req.body.deadline) return res.status(400).json({ message: 'Need name and deadline.', data: {} });
             
             const assignedUser = req.body.assignedUser || '';
+            let assignedUserName = 'unassigned';
             const completed = req.body.completed || false;
 
             if (assignedUser && assignedUser !== '') {
                 const user = await User.findById(assignedUser);
                 if (!user) return res.status(400).json({ message: 'Assigned user does not exist.', data: {} });
+                assignedUserName = user.name;
             }
 
             const newTask = new Task({
                 name: req.body.name,
                 description: req.body.description || '',
                 deadline: req.body.deadline,
-                completed: completed,
-                assignedUser: assignedUser,
-                assignedUserName: req.body.assignedUserName || 'unassigned'
+                completed,
+                assignedUser,
+                assignedUserName
             });
 
             const savedTask = await newTask.save();
@@ -90,26 +92,29 @@ module.exports = function(router) {
             if (!req.body.name || !req.body.deadline) return res.status(400).json({ message: 'Need name and deadline.', data: {} });
 
             const taskId = req.params.id;
+            if (!mongoose.Types.ObjectId.isValid(taskId)) return res.status(404).json({ message: 'Task not found.', data: {} });
 
             const currentTask = await Task.findById(taskId);
             if (!currentTask) return res.status(404).json({ message: 'Task not found.', data: {} });
 
             const currentUserId = currentTask.assignedUser;
+            let assignedUserName = 'unassigned';
             const newUserId = req.body.assignedUser || '';
-            const isCompleted = req.body.completed || false;
+            const completed = req.body.completed || false;
 
             if (newUserId && newUserId !== '') {
                 const user = await User.findById(newUserId);
                 if (!user) return res.status(400).json({ message: 'Assigned user does not exist.', data: {} });
+                assignedUserName = user.name;
             }
 
             const updatedTask = {
                 name: req.body.name,
                 description: req.body.description || '',
                 deadline: req.body.deadline,
-                completed: isCompleted,
+                completed,
                 assignedUser: newUserId,
-                assignedUserName: req.body.assignedUserName || 'unassigned',
+                assignedUserName,
                 dateCreated: currentTask.dateCreated
             };
 
@@ -137,6 +142,7 @@ module.exports = function(router) {
     individualTaskRoute.delete(async function(req, res) {
         try {
             const taskId = req.params.id;
+            if (!mongoose.Types.ObjectId.isValid(taskId)) return res.status(404).json({ message: 'Task not found.', data: {} });
 
             const task = await Task.findById(taskId);
             if (!task) return res.status(204).json({ message: 'Task not found.', data: {} });
