@@ -126,7 +126,7 @@ module.exports = function(router) {
             }
 
             if (newUserId) {
-                if (!isCompleted) {
+                if (!completed) {
                     await User.findByIdAndUpdate(newUserId, { $addToSet: { pendingTasks: taskId } });
                 } else {
                     await User.findByIdAndUpdate(newUserId, { $pull: { pendingTasks: taskId } });
