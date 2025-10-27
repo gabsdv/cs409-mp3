@@ -18,8 +18,10 @@ module.exports = function(router) {
             const count = req.query.count === 'true';
 
             if (count) {
-                const taskCount = await Task.countDocuments(where);
-                return res.status(200).json({ message: 'Success.', data: taskCount });
+                const query = Task.find(where).skip(skip);
+                if (limit) query = query.limit(limit);
+                const docs = await query.exec();
+                return res.status(200).json({ message: 'Success.', data: docs.length });
             }
 
             const query = Task.find(where).sort(sort).select(select).skip(skip).limit(limit);
